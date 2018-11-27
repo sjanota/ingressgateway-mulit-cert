@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-db-service
+  namespace: production
+  labels:
+    example: http-db-service
+  annotations:
+    auth.istio.io/8017: NONE
+spec:
+  ports:
+  - name: http
+    port: 8017
+  selector:
+    example: http-db-service
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: http-db-service
+  namespace: production
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        example: http-db-service
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+      # replace the repository URL with your own repository (e.g. {DockerID}/http-db-service:0.0.x for Docker Hub).
+      - image: eu.gcr.io/kyma-project/example/http-db-service:0.0.6
+        imagePullPolicy: IfNotPresent
+        name: http-db-service
+        ports:
+        - name: http
+          containerPort: 8017
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            memory: 32Mi
+        env:
+        - name: dbtype
+          # available dbtypes are: [memory, mssql]
+          value: "memory"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: http-db-service
+  namespace: production
+spec:
+  hosts:
+  - http-db-service.production.kyma.local
+  gateways:
+  - production-gateway
+  http:
+  - match:
+    - uri:
+        regex: /.*
+    route:
+    - destination:
+        port:
+          number: 8017
+        host: http-db-service
+    corsPolicy:
+      allowOrigin:
+      - "*" 
+

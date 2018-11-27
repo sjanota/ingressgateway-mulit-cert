@@ -1,0 +1,9 @@
+[
+    {
+        "op": "remove",
+        "path": "/spec/template/spec/volumes/3"
+    }, {
+        "op": "remove",
+        "path": "/spec/template/spec/containers/0/volumeMounts/3"
+    }
+]

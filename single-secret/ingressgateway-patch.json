@@ -1,0 +1,22 @@
+[
+    {
+        "op": "add",
+        "path": "/spec/template/spec/volumes/-",
+        "value": {
+            "name": "ingressgateway-certs-namespaces",
+            "secret": {
+                "defaultMode": 420,
+                "optional": true,
+                "secretName": "istio-ingressgateway-certs-namespaces"
+            }
+        }
+    }, {
+        "op": "add",
+        "path": "/spec/template/spec/containers/0/volumeMounts/-",
+        "value": {
+            "mountPath": "/etc/istio/ingressgateway-certs-namespaces",
+            "name": "ingressgateway-certs-namespaces",
+            "readOnly": true
+        }
+    }
+]
