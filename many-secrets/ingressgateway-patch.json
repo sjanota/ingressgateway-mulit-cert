@@ -1,0 +1,42 @@
+[
+    {
+        "op": "add",
+        "path": "/spec/template/spec/volumes/-",
+        "value": {
+            "name": "ingressgateway-certs-stage",
+            "secret": {
+                "defaultMode": 420,
+                "optional": true,
+                "secretName": "istio-ingressgateway-certs-stage"
+            }
+        }
+    }, {
+        "op": "add",
+        "path": "/spec/template/spec/containers/0/volumeMounts/-",
+        "value": {
+            "mountPath": "/etc/istio/ingressgateway-certs-stage",
+            "name": "ingressgateway-certs-stage",
+            "readOnly": true
+        }
+    },
+    {
+        "op": "add",
+        "path": "/spec/template/spec/volumes/-",
+        "value": {
+            "name": "ingressgateway-certs-qa",
+            "secret": {
+                "defaultMode": 420,
+                "optional": true,
+                "secretName": "istio-ingressgateway-certs-qa"
+            }
+        }
+    }, {
+        "op": "add",
+        "path": "/spec/template/spec/containers/0/volumeMounts/-",
+        "value": {
+            "mountPath": "/etc/istio/ingressgateway-certs-qa",
+            "name": "ingressgateway-certs-qa",
+            "readOnly": true
+        }
+    }
+]

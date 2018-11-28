@@ -1,0 +1,27 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  namespace: qa
+  name: qa-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: qa_https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs-qa/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs-qa/tls.key
+    hosts:
+    - "*.qa.kyma.local"
+  - port:
+      number: 80
+      name: qa_http
+      protocol: HTTP
+    tls:
+      httpsRedirect: true # automatic 301 redirect from http to https
+    hosts:
+    - "*.qa.kyma.local"

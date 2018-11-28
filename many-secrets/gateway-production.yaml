@@ -1,0 +1,27 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  namespace: production
+  name: production-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: production_https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs-production/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs-production/tls.key
+    hosts:
+    - "*.production.kyma.local"
+  - port:
+      number: 80
+      name: production_http
+      protocol: HTTP
+    tls:
+      httpsRedirect: true # automatic 301 redirect from http to https
+    hosts:
+    - "*.production.kyma.local"
