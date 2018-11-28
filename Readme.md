@@ -10,6 +10,7 @@ Acceptance criteria for each scenario are:
  * Application in namespace stage is served under certificate with CN *.stage.kyma.local
  * Application in namespace qa is served under certificate with CN *.qa.kyma.local
  * Application console is served under certificate with CN *.kyma.local
+ * `production` Namespace can be added and served under CN *.production.kyma.local 
 
 ## Prerequisites
  * Run all commands from root of this repository.
@@ -73,6 +74,41 @@ echo "Q" | openssl s_client -showcerts -connect console.kyma.local:443 -serverna
 Expected output:
 ```
 subject=/CN=*.kyma.local
+```
+
+### Add `production`
+1. Add production cert to secret
+```
+kubectl patch secret -n istio-system istio-ingressgateway-certs-namespaces -p '
+data:
+  "production.key": '$(cat ./production.key | base64)'
+  "production.crt": '$(cat ./production.crt | base64)'
+'
+```
+
+2. Create production gateway
+```
+kubectl apply -f ./single-secret/gateway-production.yaml
+```
+
+3. Create application in production
+```
+kubectl apply -f ./deployment-production.yaml
+```
+
+4. Add service to your `/etc/hosts/`
+```
+echo "$(minikube ip) http-db-service.qa.kyma.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+5. Verify certificate Common Name
+> NOTE: You may need to wait couple of minutes, before ingressgateway is updated. 
+```
+echo "Q" | openssl s_client -showcerts -connect http-db-service.production.kyma.local:443 -servername http-db-service.production.kyma.local 2>/dev/null | grep subject
+```
+Expected output:
+```
+subject=/CN=*.production.kyma.local
 ```
 
 #### Deprovision
