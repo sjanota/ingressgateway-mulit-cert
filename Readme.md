@@ -90,6 +90,7 @@ data:
 ```
 kubectl apply -f ./single-secret/gateway-production.yaml
 ```
+> NOTE: If gateway is created too fast ingressgateway may restart as kubernetes won't have time to mount new secrets.
 
 3. Create application in production
 ```
@@ -142,6 +143,7 @@ kubectl apply -f ./many-secrets/secret-cert-stage.yaml
 ```
 kubectl patch deployment --type json -n istio-system istio-ingressgateway -p "$(cat ./many-secrets/ingressgateway-patch.json)"
 ```
+> NOTE: ingressgateway will restart
 
 3. Create gateways
 ```
