@@ -300,17 +300,17 @@ subject=/CN=*.kyma.local
 ### Add `production`
 1. Add production cert to secret
 ```
-kubectl apply -f ./many-secrets/secret-cert-production.yaml
+kubectl apply -f ./many-ingressgateways/secret-cert-production.yaml
 ```
 
-2. Add cert to ingressgateway
+2. Deploy ingressgateway for production
 ```
-kubectl patch --type json -n istio-system deployment istio-ingressgateway -p "$(cat ./many-secrets/ingressgateway-patch-prod.json)"
+kubectl apply -f ./many-ingressgateways/ingressgateway-production.yaml
 ```
 
 3. Create production gateway
 ```
-kubectl apply -f ./many-secrets/gateway-production.yaml
+kubectl apply -f ./many-ingressgateways/gateway-production.yaml
 ```
 
 4. Create application in production
@@ -326,7 +326,7 @@ echo "$(minikube ip) http-db-service.production.kyma.local" | sudo tee -a /etc/h
 6. Verify certificate Common Name
 > NOTE: You may need to wait couple of minutes, before ingressgateway is updated. 
 ```
-echo "Q" | openssl s_client -showcerts -connect http-db-service.production.kyma.local:443 -servername http-db-service.production.kyma.local 2>/dev/null | grep subject
+echo "Q" | openssl s_client -showcerts -connect http-db-service.production.kyma.local:31393 -servername http-db-service.production.kyma.local 2>/dev/null | grep subject
 ```
 Expected output:
 ```
@@ -337,12 +337,17 @@ subject=/CN=*.production.kyma.local
 ```
 sudo sed -i '' "/http-db-service.qa.kyma.local/d" /etc/hosts
 sudo sed -i '' "/http-db-service.stage.kyma.local/d" /etc/hosts
+sudo sed -i '' "/http-db-service.production.kyma.local/d" /etc/hosts
 kubectl delete -f ./deployment-qa.yaml
 kubectl delete -f ./deployment-stage.yaml
+kubectl delete -f ./deployment-production.yaml
 kubectl delete -f ./many-ingressgateways/gateway-qa.yaml
 kubectl delete -f ./many-ingressgateways/gateway-stage.yaml
+kubectl delete -f ./many-ingressgateways/gateway-production.yaml
 kubectl delete -f ./many-ingressgateways/ingressgateway-qa.yaml
 kubectl delete -f ./many-ingressgateways/ingressgateway-stage.yaml
+kubectl delete -f ./many-ingressgateways/ingressgateway-production.yaml
 kubectl delete -f ./many-ingressgateways/secret-cert-qa.yaml
 kubectl delete -f ./many-ingressgateways/secret-cert-stage.yaml
+kubectl delete -f ./many-ingressgateways/secret-cert-production.yaml
 ```
