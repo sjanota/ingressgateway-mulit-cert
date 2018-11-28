@@ -1,0 +1,27 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  namespace: stage
+  name: stage-gateway
+spec:
+  selector:
+    stage: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: stage_https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+    hosts:
+    - "*.stage.kyma.local"
+  - port:
+      number: 80
+      name: stage_http
+      protocol: HTTP
+    tls:
+      httpsRedirect: true # automatic 301 redirect from http to https
+    hosts:
+    - "*.stage.kyma.local"
