@@ -1,0 +1,22 @@
+[
+    {
+        "op": "add",
+        "path": "/spec/template/spec/volumes/-",
+        "value": {
+            "name": "ingressgateway-certs-production",
+            "secret": {
+                "defaultMode": 420,
+                "optional": true,
+                "secretName": "istio-ingressgateway-certs-production"
+            }
+        }
+    }, {
+        "op": "add",
+        "path": "/spec/template/spec/containers/0/volumeMounts/-",
+        "value": {
+            "mountPath": "/etc/istio/ingressgateway-certs-production",
+            "name": "ingressgateway-certs-production",
+            "readOnly": true
+        }
+    }
+]
